@@ -51,6 +51,7 @@ class LangChainLLMs(LLM, BaseModel):
     llm: Any
     session: Session = None
     tmp_args: Any = None
+    cache_prob: Any = 0.0
 
     @property
     def _llm_type(self) -> str:
@@ -96,6 +97,7 @@ class LangChainLLMs(LLM, BaseModel):
         **kwargs,
     ) -> LLMResult:
         self.tmp_args = kwargs
+        self.tmp_args["temperature"] = self.cache_prob
         return super().generate(prompts, stop=stop, callbacks=callbacks)
 
     async def agenerate(
@@ -106,6 +108,7 @@ class LangChainLLMs(LLM, BaseModel):
         **kwargs,
     ) -> LLMResult:
         self.tmp_args = kwargs
+        self.tmp_args["temperature"] = self.cache_prob
         return await super().agenerate(prompts, stop=stop, callbacks=callbacks)
 
     def __call__(
@@ -152,7 +155,7 @@ class LangChainChat(BaseChatModel, BaseModel):
     chat: Any
     session: Session = None
     tmp_args: Any = None
-
+    cache_prob: Any = 0.0
     def _generate(
         self,
         messages: Any,
@@ -206,6 +209,7 @@ class LangChainChat(BaseChatModel, BaseModel):
         **kwargs,
     ) -> LLMResult:
         self.tmp_args = kwargs
+        self.tmp_args["temperature"] = self.cache_prob
         return super().generate(messages, stop=stop, callbacks=callbacks)
 
     async def agenerate(
@@ -216,6 +220,7 @@ class LangChainChat(BaseChatModel, BaseModel):
         **kwargs,
     ) -> LLMResult:
         self.tmp_args = kwargs
+        self.tmp_args["temperature"] = self.cache_prob
         return await super().agenerate(messages, stop=stop, callbacks=callbacks)
 
     @property
