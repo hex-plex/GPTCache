@@ -337,8 +337,13 @@ class SSDataManager(DataManager):
         self.eviction_base.put(ids)
 
     def get_scalar_data(self, res_data, **kwargs) -> Optional[CacheData]:
+        import time
+        st_time = time.time()
+        print(res_data)
         session = kwargs.get("session", None)
+        print("fetch session", time.time()-st_time)
         cache_data = self.s.get_data_by_id(res_data[1])
+        print("fetch cache_data", cache_data, time.time()-st_time) 
         if cache_data is None:
             return None
 
@@ -356,10 +361,11 @@ class SSDataManager(DataManager):
                 session.name, cache_session_ids, cache_questions, cache_answer
             ):
                 return None
-
+        print("check session", time.time()-st_time)
         for ans in cache_data.answers:
             if ans.answer_type != DataType.STR:
                 ans.answer = self.o.get(ans.answer)
+        print("fetch answer", time.time()-st_time)
         return cache_data
 
     def hit_cache_callback(self, res_data, **kwargs):

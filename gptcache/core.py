@@ -1,6 +1,7 @@
 import atexit
 import os
 from typing import Optional, List, Any
+import contextlib
 
 from gptcache.config import Config
 from gptcache.embedding.string import to_embeddings as string_embedding
@@ -55,6 +56,8 @@ class Cache:
         post_func=None,
         config=Config(),
         next_cache=None,
+        cache_prob=0.0,
+        ingestion=False,
     ):
         """Pass parameters to initialize GPTCache.
 
@@ -68,6 +71,8 @@ class Cache:
         :param post_func: a function to post-process messages, same as ``post_process_messages_func``
         :param config: a module to pass configurations, defaults to ``Config()``
         :param next_cache: customized method for next cache
+        :param cache_prob: temperature arguement for cache
+        :param ingestion: To ingest new questions or not
         """
         self.has_init = True
         self.cache_enable_func = cache_enable_func
@@ -78,7 +83,9 @@ class Cache:
         self.post_process_messages_func = post_func if post_func else post_process_messages_func
         self.config = config
         self.next_cache = next_cache
-
+        self.cache_prob = cache_prob
+        self.ingestion = ingestion
+        
         @atexit.register
         def close():
             try:
@@ -117,6 +124,15 @@ class Cache:
         import openai  # pylint: disable=C0415
 
         openai.api_key = os.getenv("OPENAI_API_KEY")
-
-
+    
+    @contextlib.contextmanager
+    def use_temp_config(self, **kwargs):
+        old_cache_prob = self.cache_prob
+        old_ingestion = self.ingestion
+        self.cache_prob = kwargs.get("cache_prob", old_cache_prob)
+        self.ingestion = kwargs.get("ingestion", old_ingestion)
+        yield self
+        self.cache_prob = old_cache_prob
+        self.ingestion = old_ingestion
+        
 cache = Cache()

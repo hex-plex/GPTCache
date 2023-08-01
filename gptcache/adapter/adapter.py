@@ -23,15 +23,20 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
     search_only_flag = kwargs.pop("search_only", False)
     user_temperature = "temperature" in kwargs
     user_top_k = "top_k" in kwargs
-    temperature = kwargs.pop("temperature", 0.0)
+    
     chat_cache = kwargs.pop("cache_obj", cache)
+    temperature = kwargs.pop("temperature", chat_cache.cache_prob)
     session = kwargs.pop("session", None)
     require_object_store = kwargs.pop("require_object_store", False)
     if require_object_store:
         assert chat_cache.data_manager.o, "Object store is required for adapter."
     if not chat_cache.has_init:
         raise NotInitError()
+    kwargs["ingestion"] = chat_cache.ingestion
     cache_enable = chat_cache.cache_enable_func(*args, **kwargs)
+    kwargs.pop("ingestion")
+    print("temperature", temperature)
+    print("ingestion", chat_cache.ingestion)
     context = kwargs.pop("cache_context", {})
     embedding_data = None
     # you want to retry to send the request to chatgpt when the cache is negative
@@ -291,15 +296,20 @@ async def aadapt(
     start_time = time.time()
     user_temperature = "temperature" in kwargs
     user_top_k = "top_k" in kwargs
-    temperature = kwargs.pop("temperature", 0.0)
     chat_cache = kwargs.pop("cache_obj", cache)
+    temperature = kwargs.pop("temperature", chat_cache.cache_prob)
+    
     session = kwargs.pop("session", None)
     require_object_store = kwargs.pop("require_object_store", False)
     if require_object_store:
         assert chat_cache.data_manager.o, "Object store is required for adapter."
     if not chat_cache.has_init:
         raise NotInitError()
+    kwargs["ingestion"] = chat_cache.ingestion
     cache_enable = chat_cache.cache_enable_func(*args, **kwargs)
+    kwargs.pop("ingestion")
+    print("ingestion", chat_cache.ingestion)
+    print("temperature", temperature)
     context = kwargs.pop("cache_context", {})
     embedding_data = None
     # you want to retry to send the request to chatgpt when the cache is negative
