@@ -384,7 +384,7 @@ class SQLStorage(CacheStorage):
                 query = query.filter(self._session.question_id == key)
             return query.all()
 
-    def report_cache(self, user_question, cache_question, cache_question_id, cache_answer, similarity_value, cache_delta_time):
+    def report_cache(self, user_question, cache_question, cache_question_id, cache_answer, similarity_value, cache_delta_time, extra=""):
         with self.Session() as session:
             report_data = self._report(
                 user_question=user_question,
@@ -393,6 +393,7 @@ class SQLStorage(CacheStorage):
                 cache_answer=cache_answer,
                 similarity=similarity_value,
                 cache_delta_time=cache_delta_time,
+                extra=extra
             )
             session.add(report_data)
             session.commit()

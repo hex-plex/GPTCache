@@ -35,8 +35,7 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
     kwargs["ingestion"] = chat_cache.ingestion
     cache_enable = chat_cache.cache_enable_func(*args, **kwargs)
     kwargs.pop("ingestion")
-    print("temperature", temperature)
-    print("ingestion", chat_cache.ingestion)
+    extra = chat_cache.extra_info
     context = kwargs.pop("cache_context", {})
     embedding_data = None
     # you want to retry to send the request to chatgpt when the cache is negative
@@ -110,6 +109,31 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
             if rank_threshold < min_rank
             else rank_threshold
         )
+
+        if len(search_data_list) != 0:
+            index_list = [(0,i) for i in range(len(search_data_list))]
+                
+            def post_process():
+                if chat_cache.post_process_messages_func is temperature_softmax:
+                    return_search_data = chat_cache.post_process_messages_func(
+                        messages=[t[1] for t in index_list],
+                        scores=[t[0] for t in index_list],
+                        temperature=temperature,
+                    )
+                else:
+                    return_search_data = chat_cache.post_process_messages_func(
+                        [t[1] for t in index_list]
+                    )
+                return return_search_data
+
+            return_search_index = time_cal(
+                post_process,
+                func_name="post_process_search_data",
+                report_func=chat_cache.report.post,
+            )()
+            search_data_list = [search_data_list[return_search_index]]
+
+        
         for search_data in search_data_list:
             cache_data = time_cal(
                 chat_cache.data_manager.get_scalar_data,
@@ -223,6 +247,7 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
                     else "",
                     cache_whole_data[0],
                     round(time.time() - start_time, 6),
+                    extra
                 )
             return cache_data_convert(return_message)
 
@@ -308,8 +333,7 @@ async def aadapt(
     kwargs["ingestion"] = chat_cache.ingestion
     cache_enable = chat_cache.cache_enable_func(*args, **kwargs)
     kwargs.pop("ingestion")
-    print("ingestion", chat_cache.ingestion)
-    print("temperature", temperature)
+    extra = chat_cache.extra_info
     context = kwargs.pop("cache_context", {})
     embedding_data = None
     # you want to retry to send the request to chatgpt when the cache is negative
@@ -383,6 +407,30 @@ async def aadapt(
             if rank_threshold < min_rank
             else rank_threshold
         )
+        
+        if len(search_data_list) != 0:
+            index_list = [(0,i) for i in range(len(search_data_list))]
+                
+            def post_process():
+                if chat_cache.post_process_messages_func is temperature_softmax:
+                    return_search_data = chat_cache.post_process_messages_func(
+                        messages=[t[1] for t in index_list],
+                        scores=[t[0] for t in index_list],
+                        temperature=temperature,
+                    )
+                else:
+                    return_search_data = chat_cache.post_process_messages_func(
+                        [t[1] for t in index_list]
+                    )
+                return return_search_data
+
+            return_search_index = time_cal(
+                post_process,
+                func_name="post_process_search_data",
+                report_func=chat_cache.report.post,
+            )()
+            search_data_list = [search_data_list[return_search_index]]
+        
         for search_data in search_data_list:
             cache_data = time_cal(
                 chat_cache.data_manager.get_scalar_data,
@@ -483,6 +531,7 @@ async def aadapt(
                     else "",
                     cache_whole_data[0],
                     round(time.time() - start_time, 6),
+                    extra
                 )
             return cache_data_convert(return_message)
 

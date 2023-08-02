@@ -383,7 +383,7 @@ class RedisCacheStorage(CacheStorage):
             pipeline.execute()
 
     def report_cache(self, user_question, cache_question, cache_question_id, cache_answer, similarity_value,
-                     cache_delta_time):
+                     cache_delta_time, extra=""):
         self._report(
             user_question=user_question,
             cache_question=cache_question,
@@ -391,6 +391,7 @@ class RedisCacheStorage(CacheStorage):
             cache_answer=cache_answer,
             similarity=similarity_value,
             cache_delta_time=cache_delta_time,
+            extra=extra,
             cache_time=datetime.datetime.utcnow(),
         ).save()
 

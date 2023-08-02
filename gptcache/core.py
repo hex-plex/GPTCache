@@ -85,6 +85,7 @@ class Cache:
         self.next_cache = next_cache
         self.cache_prob = cache_prob
         self.ingestion = ingestion
+        self.extra_info = ""
         
         @atexit.register
         def close():
@@ -129,10 +130,13 @@ class Cache:
     def use_temp_config(self, **kwargs):
         old_cache_prob = self.cache_prob
         old_ingestion = self.ingestion
+        old_extra_info = self.extra_info
         self.cache_prob = kwargs.get("cache_prob", old_cache_prob)
         self.ingestion = kwargs.get("ingestion", old_ingestion)
+        self.extra_info = kwargs.get("extra_info", old_extra_info)
         yield self
         self.cache_prob = old_cache_prob
         self.ingestion = old_ingestion
+        self.extra_info = old_extra_info
         
 cache = Cache()

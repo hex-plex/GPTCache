@@ -311,6 +311,7 @@ class MongoStorage(CacheStorage):
         cache_answer,
         similarity_value,
         cache_delta_time,
+        extra=""
     ):
         report_data = self._report(
             user_question=user_question,
@@ -319,6 +320,7 @@ class MongoStorage(CacheStorage):
             cache_answer=cache_answer,
             similarity=similarity_value,
             cache_delta_time=cache_delta_time,
+            extra=extra
         )
         report_data.save()
 

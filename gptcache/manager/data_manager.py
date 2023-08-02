@@ -403,6 +403,7 @@ class SSDataManager(DataManager):
         cache_answer,
         similarity_value,
         cache_delta_time,
+        extra=""
     ):
         self.s.report_cache(
             user_question,
@@ -411,6 +412,7 @@ class SSDataManager(DataManager):
             cache_answer,
             similarity_value,
             cache_delta_time,
+            extra
         )
 
     def close(self):
