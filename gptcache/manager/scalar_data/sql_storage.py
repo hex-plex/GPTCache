@@ -27,8 +27,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 DEFAULT_LEN_DOCT = {
-    "question_question": 4000,
-    "answer_answer": 4000,
+    "question_question": 8000,
+    "answer_answer": 8000,
     "session_id": 1000,
     "dep_name": 1000,
     "dep_data": 3000,
