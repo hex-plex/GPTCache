@@ -66,7 +66,7 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
         prompts=chat_cache.config.prompts,
         cache_config=chat_cache.config,
     )
-    print(pre_embedding_res)
+    print("llm input",kwargs.get("messages"))
     if isinstance(pre_embedding_res, tuple):
         pre_store_data = pre_embedding_res[0]
         pre_embedding_data = pre_embedding_res[1]
