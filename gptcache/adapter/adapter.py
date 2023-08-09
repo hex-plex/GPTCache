@@ -32,8 +32,10 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
         assert chat_cache.data_manager.o, "Object store is required for adapter."
     if not chat_cache.has_init:
         raise NotInitError()
-    kwargs["ingestion"] = chat_cache.ingestion
+    
     cache_enable = chat_cache.cache_enable_func(*args, **kwargs)
+    kwargs["ingestion"] = chat_cache.ingestion
+    cache_enable_insert = chat_cache.cache_enable_func(*args, **kwargs)
     kwargs.pop("ingestion")
     extra = chat_cache.extra_info
     context = kwargs.pop("cache_context", {})
@@ -273,7 +275,7 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
     if not llm_data:
         return None
 
-    if cache_enable:
+    if cache_enable_insert:
         try:
 
             def update_cache_func(handled_llm_data, question=None):
@@ -331,8 +333,9 @@ async def aadapt(
         assert chat_cache.data_manager.o, "Object store is required for adapter."
     if not chat_cache.has_init:
         raise NotInitError()
-    kwargs["ingestion"] = chat_cache.ingestion
     cache_enable = chat_cache.cache_enable_func(*args, **kwargs)
+    kwargs["ingestion"] = chat_cache.ingestion
+    cache_enable_insert = chat_cache.cache_enable_func(*args, **kwargs)
     kwargs.pop("ingestion")
     extra = chat_cache.extra_info
     context = kwargs.pop("cache_context", {})
@@ -549,7 +552,7 @@ async def aadapt(
     else:
         llm_data = await llm_handler(*args, **kwargs)
 
-    if cache_enable:
+    if cache_enable_insert:
         try:
 
             def update_cache_func(handled_llm_data, question=None):
