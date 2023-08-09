@@ -66,7 +66,7 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
         prompts=chat_cache.config.prompts,
         cache_config=chat_cache.config,
     )
-    pre_embedding_res = extra + pre_embedding_res
+    pre_embedding_res = extra + "\n" +  pre_embedding_res
     if isinstance(pre_embedding_res, tuple):
         pre_store_data = pre_embedding_res[0]
         pre_embedding_data = pre_embedding_res[1]
@@ -365,7 +365,7 @@ async def aadapt(
         prompts=chat_cache.config.prompts,
         cache_config=chat_cache.config,
     )
-    pre_embedding_res = extra + pre_embedding_res
+    pre_embedding_res = extra + "\n" + pre_embedding_res
     if isinstance(pre_embedding_res, tuple):
         pre_store_data = pre_embedding_res[0]
         pre_embedding_data = pre_embedding_res[1]
