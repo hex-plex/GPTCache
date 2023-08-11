@@ -34,9 +34,7 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
         raise NotInitError()
     
     cache_enable = True #chat_cache.cache_enable_func(*args, **kwargs)
-    kwargs["ingestion"] = chat_cache.ingestion
-    cache_enable_insert = chat_cache.cache_enable_func(*args, **kwargs)
-    kwargs.pop("ingestion")
+    ingestion = chat_cache.ingestion
     extra = chat_cache.extra_info
     context = kwargs.pop("cache_context", {})
     embedding_data = None
@@ -275,7 +273,7 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
     if not llm_data:
         return None
 
-    if cache_enable_insert:
+    if cache_enable:
         try:
 
             def update_cache_func(handled_llm_data, question=None):
@@ -293,6 +291,7 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
                     embedding_data,
                     extra_param=context.get("save_func", None),
                     session=session,
+                    ingestion=ingestion
                 )
                 if (
                     chat_cache.report.op_save.count > 0
@@ -334,9 +333,7 @@ async def aadapt(
     if not chat_cache.has_init:
         raise NotInitError()
     cache_enable = True #chat_cache.cache_enable_func(*args, **kwargs)
-    kwargs["ingestion"] = chat_cache.ingestion
-    cache_enable_insert = chat_cache.cache_enable_func(*args, **kwargs)
-    kwargs.pop("ingestion")
+    ingestion = chat_cache.ingestion
     extra = chat_cache.extra_info
     context = kwargs.pop("cache_context", {})
     embedding_data = None
@@ -552,7 +549,7 @@ async def aadapt(
     else:
         llm_data = await llm_handler(*args, **kwargs)
 
-    if cache_enable_insert:
+    if cache_enable:
         try:
 
             def update_cache_func(handled_llm_data, question=None):
@@ -570,6 +567,7 @@ async def aadapt(
                     embedding_data,
                     extra_param=context.get("save_func", None),
                     session=session,
+                    ingestion=ingestion
                 )
                 if (
                     chat_cache.report.op_save.count > 0
