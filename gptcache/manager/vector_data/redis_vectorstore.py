@@ -13,7 +13,7 @@ from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import Query
 from redis.commands.search.field import TagField, VectorField
 from redis.client import StrictRedis as Redis
-
+# import time
 
 class RedisVectorStore(VectorBase):
     """ vector store: Redis
@@ -52,13 +52,16 @@ class RedisVectorStore(VectorBase):
         namespace: str = "",
     ):
         self._client = Redis(
-            host=host, port=int(port), db=0, password=password, ssl=True
+            host=host, port=int(port), db=0, password=password, ssl=True, health_check_interval=2
         )
+        self._client.set("Hi","Asdf")
+        print(self._client.get("Hi"))
         self.top_k = top_k
         self.dimension = dimension
         self.collection_name = collection_name
         self.namespace = namespace
         self.doc_prefix = f"{self.namespace}doc:"  # Prefix with the specified namespace
+        # time.sleep(0.01)
         self._create_collection(collection_name)
 
     def _check_index_exists(self, index_name: str) -> bool:
@@ -94,6 +97,7 @@ class RedisVectorStore(VectorBase):
             )
 
             # create Index
+            # time.sleep(0.01)
             self._client.ft(collection_name).create_index(
                 fields=schema, definition=definition
             )

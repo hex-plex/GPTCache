@@ -33,7 +33,7 @@ def adapt(llm_handler, cache_data_convert, update_cache_callback, *args, **kwarg
     if not chat_cache.has_init:
         raise NotInitError()
     
-    cache_enable = chat_cache.cache_enable_func(*args, **kwargs)
+    cache_enable = True #chat_cache.cache_enable_func(*args, **kwargs)
     kwargs["ingestion"] = chat_cache.ingestion
     cache_enable_insert = chat_cache.cache_enable_func(*args, **kwargs)
     kwargs.pop("ingestion")
@@ -333,7 +333,7 @@ async def aadapt(
         assert chat_cache.data_manager.o, "Object store is required for adapter."
     if not chat_cache.has_init:
         raise NotInitError()
-    cache_enable = chat_cache.cache_enable_func(*args, **kwargs)
+    cache_enable = True #chat_cache.cache_enable_func(*args, **kwargs)
     kwargs["ingestion"] = chat_cache.ingestion
     cache_enable_insert = chat_cache.cache_enable_func(*args, **kwargs)
     kwargs.pop("ingestion")
