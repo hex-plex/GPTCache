@@ -12,7 +12,7 @@ import_redis()
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import Query
 from redis.commands.search.field import TagField, VectorField
-from redis.client import Redis
+from redis.client import StrictRedis as Redis
 
 
 class RedisVectorStore(VectorBase):
@@ -52,7 +52,7 @@ class RedisVectorStore(VectorBase):
         namespace: str = "",
     ):
         self._client = Redis(
-            host=host, port=int(port), username=username, password=password
+            host=host, port=int(port), db=0, password=password, ssl=True
         )
         self.top_k = top_k
         self.dimension = dimension
