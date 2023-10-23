@@ -140,3 +140,8 @@ class Cache:
         self.extra_info = old_extra_info
         
 cache = Cache()
+
+@contextlib.contextmanager
+def DummyCache():
+    yield None
+    
